@@ -42,8 +42,8 @@ def init_logs(logname="parser.log"):
 
 if __name__ == '__main__':
     init_logs()
-    create_tunnel()
+    create_tunnel(False)
     sql_version()
     get_articles_links()
 
-    close_tunnel()
+    close_tunnel(False)
