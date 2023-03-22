@@ -8,6 +8,9 @@ while [ -L "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR=$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )
 
+echo $DIR
+cd $DIR
+
 pip3 install -r requirements.txt
 git pull
 python3 main.py
