@@ -40,6 +40,7 @@ def create_tunnel(tunneled = True):
             port=DB.db_port,
             database=DB.db_name,
         )
+
     sql_cur = sql_conn.cursor()
 
 
@@ -78,7 +79,25 @@ def sql_get_articles():
     pass
 
 
+# sql_conn = psycopg2.connect(
+#     user=DB.db_user,
+#     password=DB.db_password,
+#     host='127.0.0.1',
+#     port=DB.db_port,
+#     database=DB.db_name,
+# )
+#
+# sql_cur = sql_conn.cursor()
+
 def sql_push_links(lnks: list):
+    def push_link(lnk):
+        try:
+            insert_query = "INSERT INTO links (name, link, date) VALUES (%s, %s, %s)"
+            sql_cur.execute(insert_query,(lnk['name'],lnk['link'],lnk['date']))
+            sql_conn.commit()
+            return True
+        except:
+            return False
     _log = logging.getLogger('parser.sql.pushlinks')
     values = []
     try:
@@ -90,6 +109,14 @@ def sql_push_links(lnks: list):
         sql_conn.commit()
     except Exception as e:
         _log.error(e)
+        sql_conn.rollback()
+        for lnk in lnks:
+            if push_link(lnk):
+                _log.info('Ok!')
+            else:
+                _log.info('Not Ok =(')
+
+
 
 
 def sql_version():

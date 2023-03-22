@@ -3,6 +3,7 @@ import locale
 import json
 import datetime
 from bs4 import BeautifulSoup
+from tqdm.auto import trange
 from config import *
 import logging
 from sql import *
@@ -70,7 +71,7 @@ def get_articles_links():
     a_s = nav.find_all('a', recursive=False)
     total_pages = int(a_s[-1:][0].text.strip())
     _log.info(f'Total pages: {total_pages}')
-    for current_page in range(1, total_pages):
+    for current_page in trange(1, total_pages, desc='Loading links...'):
         d = {}
         page_url = init_url + f'page/{current_page}/'
         resp = GET(page_url)
