@@ -88,14 +88,15 @@ def get_articles_links():
                     dt = datetime.datetime.strptime(date, '%d %b %Y')
                     date = dt.strftime('%Y-%m-%d')
                     link = a['href']
+                    d = {}
                     d = {
                         'name': h2,
                         'date': date,
                         'link': link
                     }
+                    #print((d['name'],d['link'],d['date']))
                     arr.append(d)
                     links.append(d)
-                    d.clear()
                 except Exception as e:
                     _log.error(e)
             sql_push_links(arr)
