@@ -23,7 +23,7 @@ class MsgCounterHandler(logging.Handler):
         self.level2count[levelname] += 1
 
 
-def init_logs(logname="parser.log"):
+def init_logs(logname="parser"):
     """ Init logging to file and stdout
     """
     dt_fmt = "%Y%m%d %H%M%S"
@@ -31,7 +31,8 @@ def init_logs(logname="parser.log"):
     out_fmt = "%(asctime)s|%(levelname).1s|%(name)s: %(message)s"
     formatter = logging.Formatter(out_fmt, dt_fmt)
     log.setLevel(log_level)
-    fh = logging.FileHandler(logname)
+    dt_now = datetime.datetime.now().strftime("%Y-%m-%d")
+    fh = logging.FileHandler(f"{logname}_{dt_now}.log")
     fh.setFormatter(formatter)
     log.addHandler(fh)
     ch = logging.StreamHandler()
