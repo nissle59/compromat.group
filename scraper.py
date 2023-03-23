@@ -145,7 +145,7 @@ def parse_article(url):
         try:
             del post['itemprop']
             del post['class']
-            post.unwrap()
+            #post.unwrap()
         except:
             pass
         d = {
@@ -154,7 +154,7 @@ def parse_article(url):
             'origin': origin,
             'source': url,
             'date': date,
-            'description': post.prettify(),
+            'description': post.prettify().replace('<div>','').replace('</div>','').strip(' \n'),
         }
         return d
     else:
