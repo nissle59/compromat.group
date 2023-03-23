@@ -148,7 +148,7 @@ def parse_article(url):
             'origin': origin,
             'source': url,
             'date': date,
-            'description': post.prettify(),
+            'description': post.unwrap().prettify(),
         }
         return d
     else:
