@@ -90,6 +90,14 @@ def sql_get_articles():
 # )
 #
 # sql_cur = sql_conn.cursor()
+def sql_get_last_link_date():
+    q = "select date from links order by date desc limit 1;"
+    try:
+        sql_cur.execute(q)
+        record = sql_cur.fetchall()[0]
+        return str(record)
+    except:
+        return None
 
 def sql_push_links(lnks: list):
     def push_link(lnk):

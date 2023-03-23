@@ -67,6 +67,9 @@ def GET(url):
 
 def get_articles_links():
     links = []
+    last_date = sql_get_last_link_date()
+    if last_date:
+        last_dt = datetime.datetime.strptime(last_date,"%Y-%m-%d")
     _log = logging.getLogger('parser.getlinks')
     init_url = base_url + 'news/'
     resp = GET(init_url)
@@ -76,6 +79,7 @@ def get_articles_links():
     a_s = nav.find_all('a', recursive=False)
     total_pages = int(a_s[-1:][0].text.strip())
     _log.info(f'Total pages: {total_pages}')
+    _log.info(f'Found last date in DB: {last_date}')
     for current_page in trange(1, total_pages, desc='Loading links...'):
         d = {}
         page_url = init_url + f'page/{current_page}/'
@@ -93,6 +97,10 @@ def get_articles_links():
                     date = a.find('div', {'class': 'stories_date'}).text.strip().title()
                     dt = datetime.datetime.strptime(date, '%d %b %Y')
                     date = dt.strftime('%Y-%m-%d')
+                    if last_date:
+                        days_diff = (dt - last_dt).days
+                        if days_diff <= -1:
+                            _log.info(f'Links get ended with last_date = {last_date} and current date = {date}')
                     link = a['href']
                     d = {}
                     d = {
