@@ -46,6 +46,7 @@ if __name__ == '__main__':
     init_logs()
     create_tunnel(SSH_TUNNELED)
     sql_version()
+    get_articles_links()
     links = sql_get_links()
     if links:
         [print(f"{link['name']} - {link['link']}") for link in links]
