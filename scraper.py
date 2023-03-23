@@ -101,6 +101,7 @@ def get_articles_links():
                         days_diff = (dt - last_dt).days
                         if days_diff <= -1:
                             _log.info(f'Links get ended with last_date = {last_date} and current date = {date}')
+                            return True
                     link = a['href']
                     d = {}
                     d = {
