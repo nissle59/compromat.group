@@ -2,11 +2,12 @@ import requests
 import locale
 import json
 import datetime
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from tqdm.auto import trange
 from config import *
 import logging
 from sql import *
+from urllib.parse import urlparse
 
 locale.setlocale(locale.LC_TIME, "ru_RU")
 
@@ -106,6 +107,67 @@ def get_articles_links():
             #     f.write(json.dumps(links, ensure_ascii=False, indent=4))
         else:
             _log.error(f'[{page_url}] FAILED!')
+
+
+def parse_article(url):
+    _log = logging.getLogger('parser.parsearticle')
+    resp = GET(url)
+    if resp:
+        local_id = int(urlparse(url).path.split('/')[-1:][0].split('-')[0])
+        origin = f'{urlparse(url).scheme}://{urlparse(url).netloc}/'
+        html = resp.text
+        soup = BeautifulSoup(html, features='html.parser')
+        full = soup.find('div',{'class':'full-story'})
+        date = full.find('meta',{'itemprop':'datePublished'})['content'].strip()
+        title = full.find('span',{'id':'news-title'}).text.strip()
+        post = soup.find('div',{'class':'post_content','itemprop':'description'})
+        try:
+            for noindex in post.find_all('noindex'):
+                noindex.extract()
+        except:
+            pass
+        try:
+            for span in post.find_all('span'):
+                span.extract()
+        except:
+            pass
+        try:
+            for p in post.find_all('p'):
+                for element in p(text=lambda text: isinstance(text, Comment)):
+                    element.extract()
+        except:
+            pass
+        try:
+            for a in post.find_all('a'):
+                a.unwrap()
+        except:
+            pass
+        d = {
+            'local_id':local_id,
+            'name': title,
+            'origin': origin,
+            'source': url,
+            'date': date,
+            'description': post.prettify(),
+        }
+        return d
+    else:
+        return None
+
+
+def parse_articles(links: dict):
+    _log = logging.getLogger('parser.parse_articles')
+    urls = [link['link'] for link in links]
+    for url in urls:
+        d = parse_article(url)
+        if d:
+            if sql_add_article(d):
+                _log.info(f'{url} parsed and added')
+            else:
+                _log.info(f'{url} parsed, NOT added')
+        else:
+            _log.info(f'{url} FAILED')
+
 
 
 if __name__ == "__main__":

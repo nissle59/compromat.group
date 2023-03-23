@@ -40,9 +40,13 @@ def init_logs(logname="parser.log"):
     log.addHandler(mh)
     return
 
+
 if __name__ == '__main__':
     init_logs()
-    create_tunnel(False)
+    create_tunnel(True)
     sql_version()
-    get_articles_links()
-    close_tunnel(False)
+    links = sql_get_links()
+    [print(f"{link['name']} - {link['link']}") for link in links]
+    print(len(links))
+    parse_articles(links)
+    close_tunnel(True)

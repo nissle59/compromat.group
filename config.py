@@ -1,3 +1,5 @@
+DEV = True
+
 proxies = [
     'SOGBee:d25Hs5A@188.191.164.19:9078',
     'SOGMeg:rTd57fsDh@188.191.164.19:9005',
@@ -17,6 +19,12 @@ base_url = 'https://compromat.group/'
 
 #proxies = [{'http':f'http://{p}','https':f'http://{p}'} for p in _pxs]
 iter_proxy = 0
+
+REMOVE_ATTRIBUTES = ['lang','language','onmouseover','onmouseout','script','style','font',
+                        'dir','face','size','color','style','class','width','height','hspace',
+                        'border','valign','align','background','bgcolor','text','link','vlink',
+                        'alink','cellpadding','cellspacing']
+
 
 class DB:
     db_user = 'twpguser'

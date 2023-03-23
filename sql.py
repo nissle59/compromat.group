@@ -1,8 +1,9 @@
 import json
 import logging
 
-from config import DB
+from config import DB, DEV
 import psycopg2
+from psycopg2.extras import DictCursor
 from sshtunnel import SSHTunnelForwarder
 
 
@@ -41,7 +42,7 @@ def create_tunnel(tunneled = True):
             database=DB.db_name,
         )
 
-    sql_cur = sql_conn.cursor()
+    sql_cur = sql_conn.cursor(cursor_factory=DictCursor)
 
 
 def close_tunnel(tunneled = True):
@@ -116,6 +117,46 @@ def sql_push_links(lnks: list):
             else:
                 _log.info('Not Ok =(')
 
+
+def sql_get_links():
+    _log = logging.getLogger('parser.sql.get_links')
+    select_query = "SELECT * FROM links WHERE downloaded = False" #AND uploaded = False"
+    if DEV:
+        select_query = "SELECT * FROM links WHERE downloaded = False LIMIT 50" #AND uploaded = False LIMIT 50"
+        _log.info('DEV mode!')
+    sql_cur.execute(select_query)
+    records = sql_cur.fetchall()
+    return records
+
+
+def sql_set_link_downloaded(link):
+    _log = logging.getLogger('parser.sql.set_link_downloaded')
+    try:
+        q = "UPDATE links SET downloaded = %s WHERE link = %s"
+        sql_cur.execute(q,(True,link))
+        sql_conn.commit()
+        return True
+    except Exception as e:
+        _log.error(e)
+        sql_conn.rollback()
+        return False
+
+
+def sql_add_article(d: dict):
+    _log = logging.getLogger('parser.sql.add_article')
+    try:
+        q = "INSERT INTO articles (local_id, name, origin, source, date, description) VALUES (%s, %s, %s, %s, %s, %s)"
+        values = (d['local_id'],d['name'],d['origin'],d['source'],d['date'],d['description'])
+        sql_cur.execute(q,values)
+        sql_conn.commit()
+        if sql_set_link_downloaded(d['source']):
+            return True
+        else:
+            return False
+    except Exception as e:
+        _log.error(e)
+        sql_conn.rollback()
+        return False
 
 
 
