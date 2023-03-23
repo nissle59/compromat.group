@@ -179,6 +179,22 @@ def sql_add_article(d: dict):
         return False
 
 
+def sql_add_image(img: dict):
+    _log = logging.getLogger('parser.sql.add_image')
+    try:
+        q = "INSERT INTO images (source, b_data, ext) VALUES (%s, %s, %s)"
+        values = (img['source'], img['b_data'], img['ext'])
+        sql_cur.execute(q, values)
+        sql_conn.commit()
+        if sql_set_link_downloaded(d['source']):
+            return True
+        else:
+            return False
+    except Exception as e:
+        _log.error(e)
+        sql_conn.rollback()
+        return False
+
 
 def sql_version():
     _log = logging.getLogger('parser.sql')

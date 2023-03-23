@@ -125,6 +125,8 @@ def get_articles_links():
 def parse_article(url):
     _log = logging.getLogger('parser.parsearticle')
     resp = GET(url)
+    d = None
+    img = None
     if resp:
         local_id = int(urlparse(url).path.split('/')[-1:][0].split('-')[0])
         origin = f'{urlparse(url).scheme}://{urlparse(url).netloc}/'
@@ -134,6 +136,22 @@ def parse_article(url):
         date = full.find('meta',{'itemprop':'datePublished'})['content'].strip()
         title = full.find('span',{'id':'news-title'}).text.strip()
         post = soup.find('div',{'class':'post_content','itemprop':'description'})
+        try:
+            img_src = full.find('div',{'class':'article_img'}).find('img')['src']
+            if img_src[0]=='/':
+                img_src = base_url[:-1]+img_src
+            b_data = GET(img_src).content
+            try:
+                ext = urlparse(img_src).path.split('/')[-1:][0].split('.')[-1:][0]
+            except:
+                ext = 'jpg'
+            img = {
+                'source':url,
+                'ext':ext,
+                'b_data':b_data
+            }
+        except:
+            img = None
         try:
             for noindex in post.find_all('noindex'):
                 noindex.extract()
@@ -170,6 +188,7 @@ def parse_article(url):
             #post.unwrap()
         except:
             pass
+
         d = {
             'local_id':local_id,
             'name': title,
@@ -178,9 +197,20 @@ def parse_article(url):
             'date': date,
             'description': post.prettify().replace('<div>','').replace('</div>','').strip(' \n'),
         }
-        return d
+        #return d
+    #else:
+        #return None
+    if d:
+        if sql_add_article(d):
+            config.CURRENT_LINK += 1
+            if img:
+                sql_add_image(img)
+            _log.info(
+                f'[{round(config.CURRENT_LINK / config.TOTAL_LINKS * 100, 2)}%] {config.CURRENT_LINK} of {config.TOTAL_LINKS} -=- {url} parsed and added')
+        else:
+            _log.info(f'{url} parsed, NOT added')
     else:
-        return None
+        _log.info(f'{url} FAILED')
 
 
 def parse_articles(links: dict):
