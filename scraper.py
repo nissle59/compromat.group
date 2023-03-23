@@ -43,6 +43,7 @@ def GET(url):
 
     try:
         resp = rs.get(url)
+        _log.info(f'{resp.status_code}')
         if resp.status_code in [200, 201]:
             return resp
         else:
@@ -218,14 +219,14 @@ def parse_articles(links: dict):
     urls = [link['link'] for link in links]
     for url in urls:
         d = parse_article(url)
-        if d:
-            if sql_add_article(d):
-                config.CURRENT_LINK += 1
-                _log.info(f'[{round(config.CURRENT_LINK / config.TOTAL_LINKS * 100, 2)}%] {config.CURRENT_LINK} of {config.TOTAL_LINKS} -=- {url} parsed and added')
-            else:
-                _log.info(f'{url} parsed, NOT added')
-        else:
-            _log.info(f'{url} FAILED')
+        # if d:
+        #     if sql_add_article(d):
+        #         config.CURRENT_LINK += 1
+        #         _log.info(f'[{round(config.CURRENT_LINK / config.TOTAL_LINKS * 100, 2)}%] {config.CURRENT_LINK} of {config.TOTAL_LINKS} -=- {url} parsed and added')
+        #     else:
+        #         _log.info(f'{url} parsed, NOT added')
+        # else:
+        #     _log.info(f'{url} FAILED')
 
 
 def multithreaded_parse_articles(links: dict):

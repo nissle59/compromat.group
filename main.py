@@ -46,7 +46,8 @@ if __name__ == '__main__':
     init_logs()
     init_db(SSH_TUNNELED)
     sql_version()
-    get_articles_links()
+    if not DEV:
+        get_articles_links()
     links = sql_get_links()
     if links:
         if MULTITHREADED:
