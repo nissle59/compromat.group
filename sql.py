@@ -186,10 +186,11 @@ def sql_add_image(img: dict):
         values = (img['source'], img['b_data'], img['ext'])
         sql_cur.execute(q, values)
         sql_conn.commit()
-        if sql_set_link_downloaded(d['source']):
-            return True
-        else:
-            return False
+        return True
+        # if sql_set_link_downloaded(d['source']):
+        #     return True
+        # else:
+        #     return False
     except Exception as e:
         _log.error(e)
         sql_conn.rollback()
