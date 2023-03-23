@@ -135,8 +135,13 @@ def sql_get_links():
     if DEV:
         select_query = f"SELECT * FROM links WHERE downloaded = False LIMIT {DEV_LIMIT}" #AND uploaded = False LIMIT 50"
         _log.info(f'DEV mode! with DEV_LIMIT = {DEV_LIMIT}')
-    sql_cur.execute(select_query)
-    records = sql_cur.fetchall()
+    try:
+        sql_cur.execute(select_query)
+        records = sql_cur.fetchall()
+    except:
+        sql_conn.rollback()
+        sql_cur.execute(select_query)
+        records = sql_cur.fetchall()
     config.TOTAL_LINKS = len(records)
     if config.TOTAL_LINKS > 0:
         return records
