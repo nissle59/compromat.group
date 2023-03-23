@@ -2,7 +2,7 @@ import requests
 import locale
 import json
 import datetime
-from bs4 import BeautifulSoup, Comment
+from bs4 import BeautifulSoup, Comment, Tag
 from tqdm.auto import trange
 from config import *
 import logging
@@ -142,13 +142,19 @@ def parse_article(url):
                 a.unwrap()
         except:
             pass
+        try:
+            del post['itemprop']
+            del post['class']
+            post.unwrap()
+        except:
+            pass
         d = {
             'local_id':local_id,
             'name': title,
             'origin': origin,
             'source': url,
             'date': date,
-            'description': post.unwrap().prettify(),
+            'description': post.prettify(),
         }
         return d
     else:
