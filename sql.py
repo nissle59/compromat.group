@@ -152,6 +152,10 @@ def sql_add_article(d: dict):
             return False
     except Exception as e:
         _log.error(e)
+        if sql_set_link_downloaded(d['source']):
+            return True
+        else:
+            return False
         sql_conn.rollback()
         return False
 
