@@ -47,9 +47,13 @@ if __name__ == '__main__':
     create_tunnel(SSH_TUNNELED)
     sql_version()
     links = sql_get_links()
-    [print(f"{link['name']} - {link['link']}") for link in links]
-    if MULTITHREADED:
-        multithreaded_parse_articles(links)
+    if links:
+        [print(f"{link['name']} - {link['link']}") for link in links]
+        if MULTITHREADED:
+            multithreaded_parse_articles(links)
+        else:
+            parse_articles(links)
     else:
-        parse_articles(links)
+        log.info('No articles to parse')
+    # Here will be uploader
     close_tunnel(SSH_TUNNELED)

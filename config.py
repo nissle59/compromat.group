@@ -1,4 +1,4 @@
-DEV = True
+DEV = False
 DEV_LIMIT = 500
 SSH_TUNNELED = False
 

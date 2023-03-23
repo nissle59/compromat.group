@@ -136,7 +136,10 @@ def sql_get_links():
     sql_cur.execute(select_query)
     records = sql_cur.fetchall()
     config.TOTAL_LINKS = len(records)
-    return records
+    if config.TOTAL_LINKS > 0:
+        return records
+    else:
+        return None
 
 
 def sql_set_link_downloaded(link):
