@@ -117,8 +117,6 @@ def get_articles_links():
                     _log.error(e)
             sql_push_links(arr)
             arr.clear()
-            # with open('links.json', 'w', encoding='utf-8') as f:
-            #     f.write(json.dumps(links, ensure_ascii=False, indent=4))
         else:
             _log.error(f'[{page_url}] FAILED!')
 

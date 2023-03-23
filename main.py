@@ -1,6 +1,7 @@
 import logging
 import warnings
 from scraper import *
+from pathlib import *
 #from config import
 
 warnings.filterwarnings("ignore")
@@ -32,7 +33,11 @@ def init_logs(logname="parser"):
     formatter = logging.Formatter(out_fmt, dt_fmt)
     log.setLevel(log_level)
     dt_now = datetime.datetime.now().strftime("%Y-%m-%d")
-    fh = logging.FileHandler(f"{logname}_{dt_now}.log")
+    path = Path.cwd() / 'logs'
+    path.mkdir(exist_ok=True)
+    fname = f"{logname}_{dt_now}.log"
+    file = path / fname
+    fh = logging.FileHandler(file)
     fh.setFormatter(formatter)
     log.addHandler(fh)
     ch = logging.StreamHandler()
