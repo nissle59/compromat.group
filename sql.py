@@ -1,7 +1,8 @@
 import json
 import logging
 
-from config import DB, DEV, DEV_LIMIT
+import config
+from config import DB, DEV, DEV_LIMIT, TOTAL_LINKS
 import psycopg2
 from psycopg2.extras import DictCursor
 from sshtunnel import SSHTunnelForwarder
@@ -126,6 +127,7 @@ def sql_get_links():
         _log.info(f'DEV mode! with DEV_LIMIT = {DEV_LIMIT}')
     sql_cur.execute(select_query)
     records = sql_cur.fetchall()
+    config.TOTAL_LINKS = len(records)
     return records
 
 

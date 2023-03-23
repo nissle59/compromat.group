@@ -1,5 +1,7 @@
 DEV = True
-DEV_LIMIT = 5
+DEV_LIMIT = 50
+TOTAL_LINKS = 0
+CURRENT_LINK = 0
 
 proxies = [
     'SOGBee:d25Hs5A@188.191.164.19:9078',

@@ -4,6 +4,8 @@ import json
 import datetime
 from bs4 import BeautifulSoup, Comment, Tag
 from tqdm.auto import trange
+
+import config
 from config import *
 import logging
 from sql import *
@@ -177,7 +179,8 @@ def parse_articles(links: dict):
         d = parse_article(url)
         if d:
             if sql_add_article(d):
-                _log.info(f'{url} parsed and added')
+                config.CURRENT_LINK += 1
+                _log.info(f'[{round(config.CURRENT_LINK / config.TOTAL_LINKS * 100, 2)}%] {config.CURRENT_LINK} of {config.TOTAL_LINKS} -=- {url} parsed and added')
             else:
                 _log.info(f'{url} parsed, NOT added')
         else:

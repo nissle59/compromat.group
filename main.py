@@ -47,6 +47,5 @@ if __name__ == '__main__':
     sql_version()
     links = sql_get_links()
     [print(f"{link['name']} - {link['link']}") for link in links]
-    print(len(links))
     parse_articles(links)
     close_tunnel(False)
