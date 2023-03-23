@@ -43,7 +43,7 @@ def GET(url):
 
     try:
         resp = rs.get(url)
-        _log.info(f'{resp.status_code}')
+        _log.debug(f'{resp.status_code}')
         if resp.status_code in [200, 201]:
             return resp
         else:
