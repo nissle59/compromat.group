@@ -44,7 +44,7 @@ def init_logs(logname="parser.log"):
 
 if __name__ == '__main__':
     init_logs()
-    create_tunnel(SSH_TUNNELED)
+    init_db(SSH_TUNNELED)
     sql_version()
     get_articles_links()
     links = sql_get_links()
@@ -56,4 +56,4 @@ if __name__ == '__main__':
     else:
         log.info('No articles to parse')
     # Here will be uploader
-    close_tunnel(SSH_TUNNELED)
+    close_db(SSH_TUNNELED)
