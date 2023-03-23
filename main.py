@@ -49,7 +49,6 @@ if __name__ == '__main__':
     get_articles_links()
     links = sql_get_links()
     if links:
-        [print(f"{link['name']} - {link['link']}") for link in links]
         if MULTITHREADED:
             multithreaded_parse_articles(links)
         else:
