@@ -1,7 +1,9 @@
 DEV = True
-DEV_LIMIT = 50
-TOTAL_LINKS = 0
-CURRENT_LINK = 0
+DEV_LIMIT = 500
+SSH_TUNNELED = False
+
+MULTITHREADED = True
+THREADS = 50
 
 proxies = [
     'SOGBee:d25Hs5A@188.191.164.19:9078',
@@ -40,4 +42,5 @@ class DB:
     ssh_user = 'root'
     ssh_password = 'qAzWsX159$$$'
 
-
+TOTAL_LINKS = 0
+CURRENT_LINK = 0

@@ -1,6 +1,7 @@
 import logging
 import warnings
 from scraper import *
+#from config import
 
 warnings.filterwarnings("ignore")
 
@@ -43,9 +44,12 @@ def init_logs(logname="parser.log"):
 
 if __name__ == '__main__':
     init_logs()
-    create_tunnel(False)
+    create_tunnel(SSH_TUNNELED)
     sql_version()
     links = sql_get_links()
     [print(f"{link['name']} - {link['link']}") for link in links]
-    parse_articles(links)
-    close_tunnel(False)
+    if MULTITHREADED:
+        multithreaded_parse_articles(links)
+    else:
+        parse_articles(links)
+    close_tunnel(SSH_TUNNELED)

@@ -4,6 +4,8 @@ import json
 import datetime
 from bs4 import BeautifulSoup, Comment, Tag
 from tqdm.auto import trange
+import concurrent.futures as pool
+import threading, time
 
 import config
 from config import *
@@ -186,6 +188,44 @@ def parse_articles(links: dict):
         else:
             _log.info(f'{url} FAILED')
 
+
+def multithreaded_parse_articles(links: dict):
+    _log = logging.getLogger('parser.multiparse')
+    t_s = []
+    tc = THREADS
+
+    l_count, l_mod = divmod(len(links), tc)
+
+    l_mod = len(links) % tc
+
+    if l_mod != 0:
+
+        l_mod = len(links) % THREADS
+        if l_mod == 0:
+            tc = THREADS
+            l_count = len(links) // tc
+
+        else:
+            tc = THREADS - 1
+            l_count = len(links) // tc
+
+    l_c = []
+    for i in range(0, THREADS):
+        _log.info(f'{i + 1} of {THREADS}')
+
+        l_c.append(links[l_count * i:l_count * i + l_count])
+
+    for i in range(0, THREADS):
+        t_s.append(
+            threading.Thread(target=parse_articles, args=(l_c[i],), daemon=True))
+    for t in t_s:
+        t.start()
+
+        _log.info(f'Started thread #{t_s.index(t) + 1} of {len(t_s)} with {len(l_c[t_s.index(t)])} links')
+
+    for t in t_s:
+        t.join()
+        _log.info(f'Joined thread #{t_s.index(t) + 1} of {len(t_s)} with {len(l_c[t_s.index(t)])} links')
 
 
 if __name__ == "__main__":
