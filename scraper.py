@@ -132,7 +132,16 @@ def parse_article(url):
         except:
             pass
         try:
+            for br in post.find_all('br'):
+                br.extract()
+        except:
+            pass
+        try:
             for p in post.find_all('p'):
+                try:
+                    del p['class']
+                except:
+                    pass
                 for element in p(text=lambda text: isinstance(text, Comment)):
                     element.extract()
         except:
