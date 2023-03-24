@@ -174,6 +174,26 @@ def sql_add_image(img: dict):
         return False
 
 
+def sql_dups_delete(table_name='articles', column_name='source'):
+    _log = logging.getLogger('uploader.sql.dups_delete')
+    try:
+        q = f"""DELETE FROM {table_name} a USING (
+          SELECT MIN(ctid) as ctid, {column_name}
+            FROM {table_name} 
+            GROUP BY {column_name} HAVING COUNT(*) > 1
+          ) b
+          WHERE a.{column_name} = b.{column_name} 
+          AND a.ctid <> b.ctid"""
+        sql_cur.execute(q)
+        sql_conn.commit()
+        _log.info(f'Deleted duplicated from {table_name}')
+        return True
+    except Exception as e:
+        _log.error(e)
+        sql_conn.rollback()
+        return False
+
+
 def sql_version():
     _log = logging.getLogger('parser.sql')
     q = "SELECT version();"

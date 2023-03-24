@@ -52,6 +52,7 @@ if __name__ == '__main__':
     init_logs()
     init_db(SSH_TUNNELED)
     sql_version()
+    sql_dups_delete()
     if not DEV:
         get_articles_links()
     links = sql_get_links()
@@ -63,4 +64,5 @@ if __name__ == '__main__':
     else:
         log.info('No articles to parse')
     # Here will be uploader
+    sql_dups_delete()
     close_db(SSH_TUNNELED)
