@@ -31,10 +31,10 @@ def GET(url):
     def with_proxy(url, proxy):
         px = {
             'http': 'http://' + proxy,
-            'htts': 'http://' + proxy
+            'https': 'http://' + proxy
         }
         try:
-            _log.info(f'Try to {url} with proxy {proxy}')
+            _log.info(f'Try to {url} with proxy {px["https"]}')
             resp = rs.get(url, proxies=px)
             if resp.status_code in [200, 201]:
                 return resp
