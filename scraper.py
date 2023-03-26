@@ -38,6 +38,8 @@ def GET(url):
             resp = rs.get(url, proxies=px)
             if resp.status_code in [200, 201]:
                 return resp
+            else:
+                _log.info(f'Failed with status {resp.status_code}')
         except:
             return None
 
@@ -52,7 +54,10 @@ def GET(url):
                     resp = with_proxy(url, p)
                     if resp.status_code in [200, 201]:
                         return resp
+                    else:
+                        _log.info(f'Failed with status {resp.status_code}')
                 except Exception as e:
+                    _log.info(f'Failed with error {e}')
                     pass
     except Exception as e:
         for p in proxies:
@@ -60,6 +65,8 @@ def GET(url):
                 resp = with_proxy(url, p)
                 if resp.status_code in [200, 201]:
                     return resp
+                else:
+                    _log.info(f'Failed with status {resp.status_code}')
             except Exception as e:
                 pass
         _log.info(f'{url} failed')
